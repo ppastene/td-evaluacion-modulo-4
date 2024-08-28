@@ -11,7 +11,7 @@ services:
       - "50000:50000"
     volumes:
       - jenkins_home:/var/jenkins_home
-      - ./shared:/shared  # Monta un volumen compartido entre Jenkins y JMeter
+      - ./shared:/shared
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - jenkins
@@ -21,4 +21,4 @@ networks:
     driver: bridge
 
 volumes:
-  jenkins_home:  # Persistencia de los datos de Jenkins
+  jenkins_home:
