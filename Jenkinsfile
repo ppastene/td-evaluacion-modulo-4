@@ -6,7 +6,6 @@ pipeline {
             steps {
                 script {
                     try {
-                        // Clonar el repositorio de pruebas unitarias
                         sh 'git clone https://github.com/ppastene/td-selenium-test.git'
                     } catch (Exception e) {
                         echo "El repositorio ya existe, omitiendo la clonación."
@@ -25,7 +24,6 @@ pipeline {
             steps {
                 script {
                     try {
-                        // Clonar el repositorio de pruebas unitarias
                         sh 'git clone https://github.com/ppastene/td-unit-tests.git'
                     } catch (Exception e) {
                         echo "El repositorio ya existe, omitiendo la clonación."
