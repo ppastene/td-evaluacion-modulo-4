@@ -2,6 +2,25 @@ pipeline {
     agent any
 
     stages {
+        stage('Clonar ppastene/td-selenium-test') {
+            steps {
+                script {
+                    try {
+                        // Clonar el repositorio de pruebas unitarias
+                        sh 'git clone https://github.com/ppastene/td-selenium-test.git'
+                    } catch (Exception e) {
+                        echo "El repositorio ya existe, omitiendo la clonación."
+                    }
+                }
+            }
+        }
+        stage('Ejecutar Selenium Tests') {
+            steps {
+                dir('td-selenium-test') {
+                    sh 'mvn clean test'
+                }
+            }
+        }
         stage('Clonar ppastene/td-unit-tests') {
             steps {
                 script {
@@ -9,7 +28,7 @@ pipeline {
                         // Clonar el repositorio de pruebas unitarias
                         sh 'git clone https://github.com/ppastene/td-unit-tests.git'
                     } catch (Exception e) {
-                        echo "Uno o ambos repositorios ya existen, omitiendo la clonación."
+                        echo "El repositorio ya existe, omitiendo la clonación."
                     }
                 }
             }
