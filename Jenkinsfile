@@ -46,15 +46,14 @@ pipeline {
         stage('Ejecutar JMeter') {
             steps {
                 script {
-                    sh '/opt/jmeter/bin/jmeter -n -t /shared/clase4_m4.jmx -l /shared/results.jtl'
+                    sh '/opt/jmeter/bin/jmeter -n -t /shared/clase4_m4.jmx -l /shared/jmeter-reports/report.jtl'
                 }
             }
         }
         stage('Ejecutar SOAPUI') {
             steps {
                 script {
-                    def soapUICommand = '/opt/soapui/bin/testrunner.sh -r -j -d"/opt/soapui/reports" /shared/soapui-evaluacion-final.xml'
-                    sh soapUICommand
+                    sh  '/opt/soapui/bin/testrunner.sh -r -j -f "soapui-report.xml" -d "/shared/soapui-reports/" /shared/soapui-evaluacion-final.xml'
                 }
             }
         }
@@ -62,8 +61,9 @@ pipeline {
 
     post {
         always {
-            archiveArtifacts artifacts: '**/shared/results.jtl', allowEmptyArchive: true
-            archiveArtifacts artifacts: '**/opt/soapui/reports/*.xml', allowEmptyArchive: true
+            archiveArtifacts artifacts: '**/shared/junit-reports/*.xml', allowEmptyArchive: true
+            archiveArtifacts artifacts: '**/shared/jmeter-reports/report.jtl', allowEmptyArchive: true
+            archiveArtifacts artifacts: '**/shared/soapui-reports/*.xml', allowEmptyArchive: true
         }
     }
 }
