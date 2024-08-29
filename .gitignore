@@ -1,1 +1,3 @@
-shared/*.jtl
+shared/jmeter-reports
+shared/soapui-reports
+shared/junit-reports
