@@ -25,5 +25,24 @@ RUN wget https://dl.eviware.com/soapuios/5.7.2/SoapUI-5.7.2-linux-bin.tar.gz && 
 # Configura el PATH para SoapUI
 ENV PATH=$PATH:/opt/soapui/bin
 
+# Instala Google Chrome
+RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
+    apt-get install -y ./google-chrome-stable_current_amd64.deb && \
+    rm google-chrome-stable_current_amd64.deb
+
+# Descarga e instala Google Chrome versión 128 (si es necesario)
+# Nota: La descarga de versiones específicas de Google Chrome puede no estar disponible en la URL directa proporcionada.
+RUN wget https://storage.googleapis.com/chrome-for-testing-public/128.0.6613.86/linux64/chrome-linux64.zip && \
+    unzip chrome-linux64.zip -d /opt/chrome && \
+    rm chrome-linux64.zip && \
+    ln -s /opt/chrome/chrome /usr/local/bin/google-chrome
+
+# Instala ChromeDriver versión 128
+RUN wget https://storage.googleapis.com/chrome-for-testing-public/128.0.6613.84/linux64/chromedriver-linux64.zip && \
+    unzip chromedriver-linux64.zip -d /usr/local/bin/ && \
+    mv /usr/local/bin/chromedriver-linux64 /usr/local/bin/chromedriver && \
+    chmod +x /usr/local/bin/chromedriver && \
+    rm chromedriver-linux64.zip
+
 # Cambia el usuario de nuevo a Jenkins
 USER jenkins
