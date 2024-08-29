@@ -2,15 +2,38 @@ pipeline {
     agent any
 
     stages {
-        stage('Clonar repositorio') {
-            script {
-                def repoDir = 'td-unit-tests'
-                if (fileExists(repoDir)) {
-                    dir(repoDir) {
-                        sh 'git pull'
+        stage('Clonar ppastene/td-selenium-test') {
+            steps {
+                script {
+                    def repoDir = 'td-selenium-test'
+                    if (fileExists(repoDir)) {
+                        dir(repoDir) {
+                            sh 'git pull'
+                        }
+                    } else {
+                        sh 'git clone https://github.com/ppastene/td-selenium-test.git'
                     }
-                } else {
-                    sh 'git clone https://github.com/ppastene/td-unit-tests.git'
+                }
+            }
+        }
+        stage('Ejecutar Selenium Tests') {
+            steps {
+                dir('td-selenium-test') {
+                    sh 'mvn clean test'
+                }
+            }
+        }
+        stage('Clonar ppastene/td-unit-tests') {
+            steps {
+                script {
+                    def repoDir = 'td-unit-tests'
+                    if (fileExists(repoDir)) {
+                        dir(repoDir) {
+                            sh 'git pull'
+                        }
+                    } else {
+                        sh 'git clone https://github.com/ppastene/td-unit-tests.git'
+                    }
                 }
             }
         }
@@ -21,19 +44,22 @@ pipeline {
                 }
             }
         }
-        stage('Ejecutar SoapUI') {
+        stage('Verificar archivos en shared') {
             steps {
-                script {
-                    def soapUICommand = '/opt/soapui/bin/testrunner.sh -r -j -d"/opt/soapui/reports" /shared/soapui-evaluacion-final.xml'
-                    sh soapUICommand
-                }
+                sh 'ls -la /shared'
             }
         }
         stage('Ejecutar JMeter') {
             steps {
                 script {
-                    // Ejecutar el script de JMeter ubicado en la carpeta shared
-                    sh '/opt/jmeter/bin/jmeter -n -t /shared/clase4_m4.jmx -l /shared/results.jtl'
+                    sh '/opt/jmeter/bin/jmeter -n -t /shared/clase4_m4.jmx -l /shared/jmeter-reports/report.jtl'
+                }
+            }
+        }
+        stage('Ejecutar SOAPUI') {
+            steps {
+                script {
+                    sh  '/opt/soapui/bin/testrunner.sh -r -j -f "soapui-report.xml" -d "/shared/soapui-reports/" /shared/soapui-evaluacion-final.xml'
                 }
             }
         }
@@ -41,9 +67,9 @@ pipeline {
 
     post {
         always {
-            // Archiva los informes generados por JMeter y SoapUI
-            archiveArtifacts artifacts: '**/shared/results.jtl', allowEmptyArchive: true
-            archiveArtifacts artifacts: '**/opt/soapui/reports/*.xml', allowEmptyArchive: true
+            archiveArtifacts artifacts: '**/shared/junit-reports/*.xml', allowEmptyArchive: true
+            archiveArtifacts artifacts: '**/shared/jmeter-reports/report.jtl', allowEmptyArchive: true
+            archiveArtifacts artifacts: '**/shared/soapui-reports/*.xml', allowEmptyArchive: true
         }
     }
 }
