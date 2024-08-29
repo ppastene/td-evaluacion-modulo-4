@@ -3,15 +3,14 @@ pipeline {
 
     stages {
         stage('Clonar repositorio') {
-            steps {
-                script {
-                    try {
-                        // Intentar clonar el repositorio
-                        sh 'git clone https://github.com/ppastene/td-unit-tests.git'
-                    } catch (Exception e) {
-                        // Si la carpeta ya existe, se captura la excepción y se continua
-                        echo "El repositorio ya existe, omitiendo el clonación."
+            script {
+                def repoDir = 'td-unit-tests'
+                if (fileExists(repoDir)) {
+                    dir(repoDir) {
+                        sh 'git pull'
                     }
+                } else {
+                    sh 'git clone https://github.com/ppastene/td-unit-tests.git'
                 }
             }
         }
