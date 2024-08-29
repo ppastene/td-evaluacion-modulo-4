@@ -52,14 +52,14 @@ pipeline {
         stage('Ejecutar JMeter') {
             steps {
                 script {
-                    sh '/opt/jmeter/bin/jmeter -n -t /shared/clase4_m4.jmx -l /shared/jmeter-report.jtl'
+                    sh '/opt/jmeter/bin/jmeter -n -t /shared/clase4_m4.jmx -l /shared/reports/jmeter-report.jtl'
                 }
             }
         }
         stage('Ejecutar SOAPUI') {
             steps {
                 script {
-                    sh  '/opt/soapui/bin/testrunner.sh -r -j -f "soapui-report.xml" -d "/shared" /shared/soapui-evaluacion-final.xml'
+                    sh  '/opt/soapui/bin/testrunner.sh -r -j -f "soapui-report.xml" -d "/shared/reports" /shared/soapui-evaluacion-final.xml'
                 }
             }
         }
@@ -67,9 +67,9 @@ pipeline {
 
     post {
         always {
-            archiveArtifacts artifacts: '**/shared/junit-reports/*.xml', allowEmptyArchive: true
-            archiveArtifacts artifacts: '**/shared/jmeter-report.jtl', allowEmptyArchive: true
-            archiveArtifacts artifacts: '**/shared/soapui-reports/*.xml', allowEmptyArchive: true
+            archiveArtifacts artifacts: '**/shared/reports/*.xml', allowEmptyArchive: true
+            archiveArtifacts artifacts: '**/shared/reports/*.jtl', allowEmptyArchive: true
+            archiveArtifacts artifacts: '**/shared/reports/*.xml', allowEmptyArchive: true
         }
     }
 }
